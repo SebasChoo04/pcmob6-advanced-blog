@@ -2,7 +2,8 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import IndexScreen from './IndexScreen';
 import CreateScreen from './CreateScreen';
-import EditScreen from './EditScreen'
+import EditScreen from './EditScreen';
+
 const InnerStack = createStackNavigator();
 export default function BlogStack() {
   return (
