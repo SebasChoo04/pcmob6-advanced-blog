@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, FlatList} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, RefreshControl} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { API, API_POSTS } from "../constants/API";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function IndexScreen({ navigation, route }) {
+
   const [posts, setPosts] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   // This is to set up the top right button
   useEffect(() => {
@@ -38,6 +40,12 @@ export default function IndexScreen({ navigation, route }) {
     }
   }, [route.params?.post])
 
+  async function onRefresh() {
+    setRefreshing(true);
+    const response = await getPosts()
+    setRefreshing(false);
+  }
+
   async function getPosts() {
     const token = await AsyncStorage.getItem("token");
     try {
@@ -46,6 +54,7 @@ export default function IndexScreen({ navigation, route }) {
       })
       console.log(response.data);
       setPosts(response.data);
+      return "completed"
     } catch (error) {
       console.log(error.response.data);
     }
@@ -99,6 +108,10 @@ export default function IndexScreen({ navigation, route }) {
         renderItem={renderItem}
         style={{ width: "100%" }}
         keyExtractor={(item) => item.id.toString()}
+        refreshControl={<RefreshControl
+          colors={["#9Bd35A", "#689F38"]}
+          refreshing={refreshing}
+          onRefresh={onRefresh}/>}
       />
     </View>
   );
