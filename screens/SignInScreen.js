@@ -50,9 +50,14 @@ export default function SignInSignUp({ navigation }) {
           username,
           password,
         });
-        console.log("Success signing up!");
-        setLoading(false);
-        login();
+        if (response.data.Error) {
+          setErrorText(response.data.Error);
+          setLoading(false);
+        } else {
+          console.log("Success signing up!");
+          setLoading(false);
+          login(); 
+        }
       } catch (error) {
         setLoading(false);
         console.log("Error logging in!");
@@ -101,7 +106,7 @@ export default function SignInSignUp({ navigation }) {
           <TouchableOpacity style={styles.button} onPress={isLogIn? login: signUp}>
             <Text style={styles.buttonText}> {isLogIn ? "Log In" : "Sign Up"} </Text>
           </TouchableOpacity>
-          {loading ? <ActivityIndicator/> : <View/>}
+          {loading ? <ActivityIndicator style={{ marginLeft: 10 }}/> : <View/>}
         </View>
       </View>
       <Text style={styles.errorText}>
