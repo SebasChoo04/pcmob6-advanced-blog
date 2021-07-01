@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import IndexScreen from './IndexScreen';
 import CreateScreen from './CreateScreen';
 import EditScreen from './EditScreen';
+import ShowScreen from './DetailsScreen';
 
 const InnerStack = createStackNavigator();
 export default function BlogStack() {
@@ -23,7 +24,8 @@ export default function BlogStack() {
           fontWeight: "bold",
         }
       }}/>
-      <InnerStack.Screen name="Add" component={CreateScreen} />
+      <InnerStack.Screen name="Add" component={CreateScreen}/>
+      <InnerStack.Screen name="Details" component={ShowScreen}/>
       <InnerStack.Screen name="Edit" component={EditScreen}/>
     </InnerStack.Navigator>
   )

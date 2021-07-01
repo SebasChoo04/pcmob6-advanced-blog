@@ -12,7 +12,7 @@ export default function IndexScreen({ navigation, route }) {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={addNote}>
+        <TouchableOpacity onPress={addPost}>
           <Ionicons
             name="ios-create-outline"
             size={30}
@@ -31,6 +31,13 @@ export default function IndexScreen({ navigation, route }) {
     getPosts();
   }, []);
 
+  useEffect(() => {
+    const newPost = route.params?.post
+    if (newPost) {
+      getPosts() //Refresh page
+    }
+  }, [route.params?.post])
+
   async function getPosts() {
     const token = await AsyncStorage.getItem("token");
     try {
@@ -44,36 +51,44 @@ export default function IndexScreen({ navigation, route }) {
     }
   }
 
-  function addNote() {
-    navigation.navigate("Add Screen");
+  function addPost() {
+    navigation.push("Add");
   }
 
-  // This deletes an individual note
-  function deleteNote(id) {
+  async function deletePost(id) {
+    const token = await AsyncStorage.getItem("token");
     console.log("Deleting " + id);
-    // To delete that item, we filter out the item we don't want
-    setNotes(notes.filter((item) => item.id !== id));
+    try {
+      const response = await axios.delete(API + API_POSTS + `/${id}`, {
+        headers: { Authorization: `JWT ${token}` },
+      })
+      console.log(response);
+      setPosts(posts.filter((item) => item.id !== id));
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   // The function to render each row in our FlatList
   function renderItem({ item }) {
     return (
-      <View
-        style={{
-          padding: 10,
-          paddingTop: 20,
-          paddingBottom: 20,
-          borderBottomColor: "#ccc",
-          borderBottomWidth: 1,
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <Text>{item.title}</Text>
-        <TouchableOpacity onPress={() => deleteNote(item.id)}>
-          <Ionicons name="trash" size={16} color="#944" />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={() => navigation.navigate("Details", {post: item})}>
+        <View
+          style={{
+            padding: 10,
+            paddingTop: 20,
+            paddingBottom: 20,
+            borderBottomColor: "#ccc",
+            borderBottomWidth: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}>
+          <Text>{item.title}</Text>
+          <TouchableOpacity onPress={() => deletePost(item.id)}>
+            <Ionicons name="trash" size={18} color="#944" />
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
     );
   }
 
