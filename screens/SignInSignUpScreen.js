@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, UIManager, LayoutA
 import { API, API_LOGIN, API_SIGNUP } from '../constants/API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 } //Needs to be manually enabled for android

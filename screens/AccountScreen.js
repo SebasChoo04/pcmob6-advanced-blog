@@ -9,9 +9,7 @@ import {
 import { commonStyles } from "../styles/commonStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-
-const API = "https://saltyseb.pythonanywhere.com";
-const API_WHOAMI = "/whoami";
+import { API, API_WHOAMI } from "../constants/API";
 
 export default function AccountScreen({ navigation }) {
   const [username, setUsername] = useState("");
