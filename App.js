@@ -6,6 +6,7 @@ import AccountScreen from "./screens/AccountScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import SignInSignUp from "./screens/SignInScreen";
 
 const Stack = createStackNavigator();
 
@@ -37,7 +38,7 @@ export default function App() {
         initialRouteName={signedIn ? "Account" : "SignIn"}
       >
         <Stack.Screen component={AccountScreen} name="Account" />
-        <Stack.Screen component={SignInScreen} name="SignIn" />
+        <Stack.Screen component={SignInSignUp} name="SignIn" />
       </Stack.Navigator>
     </NavigationContainer>
   );

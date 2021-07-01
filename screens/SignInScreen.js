@@ -1,26 +1,21 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ActivityIndicator,
-} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 
-const API = "https://xxxx.pythonanywhere.com";
-const API_LOGIN = "/auth";
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, UIManager, LayoutAnimation, ActivityIndicator, Keyboard } from 'react-native';
+import { API, API_LOGIN, API_SIGNUP } from '../constants/API';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+} //Needs to be manually enabled for android
 
-export default function SignInScreen({ navigation }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorText, setErrorText] = useState("");
-  const [loading, setLoading] = useState(false);
+export default function SignInSignUp({ navigation }) {
+
+  const [isLogIn, setIsLogIn] = useState(true)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [errorText, setErrorText] = useState('')
 
   async function login() {
     console.log("---- Login time ----");
@@ -40,87 +35,132 @@ export default function SignInScreen({ navigation }) {
     } catch (error) {
       setLoading(false);
       console.log("Error logging in!");
-      console.log(error.response);
+      console.log(error);
       setErrorText(error.response.data.description);
     }
   }
 
+  async function signUp() {
+    if (password != confirmPassword) {
+      setErrorText("Your passwords don't match. Check and try again.")
+    } else {
+      try {
+        setLoading(true);
+        const response = await axios.post(API + API_SIGNUP, {
+          username,
+          password,
+        });
+        console.log("Success signing up!");
+        setLoading(false);
+        login();
+      } catch (error) {
+        setLoading(false);
+        console.log("Error logging in!");
+        console.log(error.response);
+        setErrorText(error.response.data.description);
+      }
+    }
+  }
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Sign in to blog</Text>
-        <Text style={styles.fieldTitle}>Username</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>
+        {isLogIn ? "Log In" : "Sign Up"}
+      </Text>
+      <View style={styles.inputView}>
         <TextInput
-          style={styles.input}
-          autoCapitalize="none"
-          autoCorrect={false}
-          value={username}
-          onChangeText={(input) => setUsername(input)}
+          style={styles.textInput}
+          placeholder="Username:"
+          placeholderTextColor="#003f5c"
+          onChangeText={(username) => setUsername(username)}
         />
-        <Text style={styles.fieldTitle}>Password</Text>
-        <TextInput
-          style={styles.input}
-          autoCapitalize="none"
-          autoCompleteType="password"
-          autoCorrect={false}
-          secureTextEntry={true}
-          value={password}
-          onChangeText={(input) => setPassword(input)}
-        />
-        <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity onPress={login} style={styles.loginButton}>
-            <Text style={styles.buttonText}>Log in</Text>
-          </TouchableOpacity>
-          {loading ? (
-            <ActivityIndicator style={{ marginLeft: 20, marginBottom: 20 }} /> // adjust
-          ) : null}
-        </View>
-        <Text style={styles.errorText}>{errorText}</Text>
-        <View style={{ height: 20, alignItems: "left" }}></View>
       </View>
-    </TouchableWithoutFeedback>
+  
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Password:"
+          placeholderTextColor="#003f5c"
+          secureTextEntry={true}
+          onChangeText={(pw) => setPassword(pw)}
+        />
+      </View>
+
+      {isLogIn ? <View/> :
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Confirm Password:"
+            placeholderTextColor="#003f5c"
+            secureTextEntry={true}
+            onChangeText={(pw) => setConfirmPassword(pw)}
+          />
+        </View>}
+      <View/>
+      <View>
+        <View style={{flexDirection: "row"}}>
+          <TouchableOpacity style={styles.button} onPress={isLogIn? login: signUp}>
+            <Text style={styles.buttonText}> {isLogIn ? "Log In" : "Sign Up"} </Text>
+          </TouchableOpacity>
+          {loading ? <ActivityIndicator/> : <View/>}
+        </View>
+      </View>
+      <Text style={styles.errorText}>
+        {errorText}
+      </Text>
+        <TouchableOpacity
+          onPress={() => {
+            LayoutAnimation.configureNext({ duration: 700, create: { type: 'linear', property: 'opacity' }, update: { type: 'spring', springDamping: 0.4 }});
+            setIsLogIn(!isLogIn);
+          }}>
+            <Text style={styles.switchText}> {isLogIn ? "No account? Sign up now." : "Already have an account? Log in here."}</Text>
+        </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    padding: 24,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    marginBottom: 24,
+    fontWeight: 'bold',
+    fontSize: 40, 
+    margin: 20
   },
-  fieldTitle: {
-    fontSize: 18,
-    marginBottom: 12,
+  switchText: {
+    fontWeight: '400',
+    fontSize: 20, 
+    marginTop: 20
   },
-  input: {
-    borderColor: "#999",
-    borderWidth: 1,
-    marginBottom: 24,
-    padding: 4,
-    height: 36,
-    fontSize: 18,
-    backgroundColor: "white",
-  },
-  loginButton: {
-    backgroundColor: "blue",
-    width: 120,
+  inputView: {
+    backgroundColor: "#FFC0CB",
+    borderRadius: 30,
+    width: "70%",
+    height: 45,
+    marginBottom: 20,
     alignItems: "center",
-    padding: 18,
-    marginTop: 12,
-    marginBottom: 36,
+  },
+  textInput: {
+    height: 50,
+    flex: 1,
+    padding: 10,
+  },
+  button: {
+    backgroundColor: 'blue',
+    borderRadius: 25,
   },
   buttonText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 18,
+    fontWeight: '400',
+    fontSize: 20, 
+    margin: 20,
+    color: 'white'
   },
   errorText: {
-    color: "red",
-    height: 40,
-  },
+    fontSize: 15,
+    color: 'red',
+    marginTop: 20
+  }
 });
