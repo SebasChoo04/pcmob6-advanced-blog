@@ -31,7 +31,7 @@ export default function SignInSignUp({ navigation }) {
       // console.log(response);
       await AsyncStorage.setItem("token", response.data.access_token);
       setLoading(false);
-      navigation.navigate("Account");
+      navigation.navigate("Logged In");
     } catch (error) {
       setLoading(false);
       console.log("Error logging in!");
@@ -116,6 +116,7 @@ export default function SignInSignUp({ navigation }) {
           onPress={() => {
             LayoutAnimation.configureNext({ duration: 700, create: { type: 'linear', property: 'opacity' }, update: { type: 'spring', springDamping: 0.4 }});
             setIsLogIn(!isLogIn);
+            setErrorText("");
           }}>
             <Text style={styles.switchText}> {isLogIn ? "No account? Sign up now." : "Already have an account? Log in here."}</Text>
         </TouchableOpacity>

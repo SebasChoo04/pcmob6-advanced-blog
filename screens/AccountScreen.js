@@ -32,6 +32,7 @@ export default function AccountScreen({ navigation }) {
         console.log(error.response.data);
         if (error.response.data.status_code === 401) {
           signOut();
+          navigation.navigate("SignInSignUp")
         }
       } else {
         console.log(error);
@@ -55,7 +56,7 @@ export default function AccountScreen({ navigation }) {
 
   function signOut() {
     AsyncStorage.removeItem("token");
-    navigation.navigate("SignIn");
+    navigation.navigate("SignInSignUp");
   }
 
   return (
