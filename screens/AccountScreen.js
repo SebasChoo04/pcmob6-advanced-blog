@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
-import {
-  ActivityIndicator,
-  Button,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Button, StyleSheet, Text, View, Switch } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { API, API_WHOAMI } from "../constants/API";
+import { useSelector, useDispatch } from "react-redux";
+import { lightModeAction, darkModeAction } from "../redux/ducks/accountPref";
 
 export default function AccountScreen({ navigation }) {
+
   const [username, setUsername] = useState("");
+  const isDark = useSelector((state) => state.accountPrefs.isDark);
+  const dispatch = useDispatch();
+
+  function switchMode() {
+    isDark ? dispatch(lightModeAction()) : dispatch(darkModeAction())
+  }
 
   async function getUsername() {
     console.log("---- Getting user name ----");
@@ -61,9 +64,12 @@ export default function AccountScreen({ navigation }) {
     <View style={commonStyles.container}>
       <Text>Account Screen</Text>
       <Text>{username}</Text>
+      <Text> Dark Mode? </Text>
+      <Switch
+        value={isDark}
+        onChange={switchMode}
+      />
       <Button title="Sign out" onPress={signOut} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

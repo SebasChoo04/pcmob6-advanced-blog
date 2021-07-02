@@ -6,10 +6,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignInSignUp from "./screens/SignInSignUpScreen";
+import { Provider } from "react-redux";
+import store from "./redux/configureStore";
 
 const Stack = createStackNavigator();
 
-export default function App() {
+ function App() {
   const [loading, setLoading] = useState(true);
   const [signedIn, setSignedIn] = useState(false);
 
@@ -41,6 +43,14 @@ export default function App() {
       </Stack.Navigator>
     </NavigationContainer>
   );
+}
+
+export default function AppWrapper() {
+  return (
+    <Provider store={store} >
+      <App/>
+    </Provider>
+  )
 }
 
 const styles = StyleSheet.create({
