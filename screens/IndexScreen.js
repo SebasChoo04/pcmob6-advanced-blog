@@ -34,11 +34,16 @@ export default function IndexScreen({ navigation, route }) {
   }, []);
 
   useEffect(() => {
-    const newPost = route.params?.post
-    if (newPost) {
-      getPosts() //Refresh page
-    }
-  }, [route.params?.post])
+    console.log("Setting up nav listener");
+    // Check for when we come back to this screen
+    const removeListener = navigation.addListener("focus", () => {
+      console.log("Running nav listener");
+      getPosts();
+    });
+    getUsername();
+
+    return removeListener;
+  }, []);
 
   async function onRefresh() {
     setRefreshing(true);
