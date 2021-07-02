@@ -1,29 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, RefreshControl} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { API, API_POSTS } from "../constants/API";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSelector } from "react-redux";
+import { darkStyles, lightStyles } from "../styles/commonStyles";
 
 export default function IndexScreen({ navigation, route }) {
 
   const [posts, setPosts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const isDark = useSelector((state) => state.accountPrefs.isDark);
+  const styles = isDark ? darkStyles : lightStyles;
 
   // This is to set up the top right button
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={addPost}>
-          <Ionicons
-            name="ios-create-outline"
-            size={30}
-            color="black"
-            style={{
-              color: "#f55",
-              marginRight: 10,
-            }}
-          />
+          <FontAwesome name="plus" size={24} color="black" style={{ color: styles.headerTint, marginRight: 15 }} />
         </TouchableOpacity>
       ),
     });
@@ -99,9 +95,9 @@ export default function IndexScreen({ navigation, route }) {
             flexDirection: "row",
             justifyContent: "space-between",
           }}>
-          <Text>{item.title}</Text>
+          <Text style={styles.text}>{item.title}</Text>
           <TouchableOpacity onPress={() => deletePost(item.id)}>
-            <Ionicons name="trash" size={18} color="#944" />
+            <FontAwesome name="trash" size={20} color="#a80000" />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -124,11 +120,3 @@ export default function IndexScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffc",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

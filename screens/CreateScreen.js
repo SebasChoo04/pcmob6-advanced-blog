@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TextInput, Button } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import axios from "axios";
 import { API, API_CREATE } from "../constants/API";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { lightStyles, darkStyles, commonStyles } from "../styles/commonStyles";
+import { useSelector } from "react-redux";
 
 export default function CreateScreen({ navigation }) {
 
-  const [title , setTitle] = useState('')
-  const [content, setContent] = useState('')
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const isDark = useSelector((state) => state.accountPrefs.isDark);
+  const styles = {...isDark ? darkStyles : lightStyles, ...commonStyles}
 
   async function savePost() {
     const post = {
@@ -29,38 +33,39 @@ export default function CreateScreen({ navigation }) {
   }
 
   return (
-    <View>
-        <Text style={[styles.label, {marginTop: 20}]}>Enter Title:</Text>
+    <View style={styles.container}>
+      <View style={{ marginTop: 20, marginLeft: 20, marginRight: 20 }}>
+        <Text style={[additionalStyles.label, styles.text]}>Enter Title:</Text>
         <TextInput
-          style={styles.input}
+          style={additionalStyles.input}
           value={title}
           onChangeText={text => setTitle(text)}
         />
-        <Text style={styles.label}>Enter Content:</Text>
+        <Text style={[additionalStyles.label, styles.text]}>Enter Content:</Text>
         <TextInput
-          style={styles.input}
+          style={additionalStyles.input}
           value={content}
           onChangeText={text => setContent(text)}
         />
-        <Button
-          title="Save Blog Post"
-          onPress={savePost}
-        />
+      <TouchableOpacity style={[styles.button, {marginTop: 20}]} onPress={savePost}>
+        <Text style={styles.buttonText}>
+          Save
+        </Text>
+        </TouchableOpacity>
       </View>
+    </View>
   )
 }
 
-const styles = StyleSheet.create({
+const additionalStyles = StyleSheet.create({
   input: {
-    fontSize: 18,
+    fontSize: 24,
     borderWidth: 1,
     borderColor: "black",
     marginBottom: 15,
-    padding: 5,
-    margin: 5
   },
   label: {
-    fontSize: 20,
+    fontSize: 28,
     marginBottom: 10,
     marginLeft: 5
   }

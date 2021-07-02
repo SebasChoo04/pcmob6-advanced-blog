@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import { commonStyles, darkStyles, lightStyles } from "../styles/commonStyles";
 
 export default function ShowScreen({ navigation, route }) {
 
   const [post, setPost] = useState(route.params.post);
+  const isDark = useSelector((state) => state.accountPrefs.isDark);
+  const styles = {...isDark ? darkStyles : lightStyles, ...commonStyles};
 
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={editPost} style={{marginRight: 10}}>
-          <FontAwesome
-            name="pencil-square-o"
-            size={30}
-            color="black"
-          />
+          <FontAwesome name="pencil-square-o" size={30} color={styles.headerTint} />
         </TouchableOpacity>
       ),
     });
@@ -25,38 +25,15 @@ export default function ShowScreen({ navigation, route }) {
   }, [])
 
   function editPost() {
-    
+    navigation.navigate("Edit")
   }
   
   return (
-    <View>
-      <Text style={styles.title}>{post.title}</Text>
-      <Text style={styles.content}>{post.text}</Text>
+    <View style={styles.container}>
+      <Text style={[styles.title, styles.text, { marginTop: 30, marginLeft: 40, marginRight: 40 }]}>{post.title}</Text>
+      <Text style={[styles.content, styles.text, { margin: 20 }]}>{post.text}</Text>
       {//change text to content when making slides
       }
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontWeight: "bold",
-    fontSize: 30, 
-    textAlign: 'center',
-    marginTop: 20, 
-  },
-  content: {
-    fontWeight: '400',
-    fontSize: 24, 
-    marginTop: 30,
-    marginLeft: 20, 
-    marginRight: 20,
-  },
-  author: {
-    fontWeight: '200',
-    fontSize: 15, 
-    marginTop: 30,
-    marginLeft: 20, 
-    marginRight: 20,
-  }
-});
