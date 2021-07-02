@@ -40,8 +40,7 @@ export default function IndexScreen({ navigation, route }) {
       console.log("Running nav listener");
       getPosts();
     });
-    getUsername();
-
+    getPosts();
     return removeListener;
   }, []);
 
