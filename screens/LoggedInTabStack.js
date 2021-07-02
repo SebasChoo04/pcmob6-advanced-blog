@@ -1,8 +1,7 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BlogStack from './BlogStack';
-import AccountScreen from './AccountScreen';
+import AccountStack from './AccountStack';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useSelector } from 'react-redux';
 
@@ -36,7 +35,7 @@ export default function LoggedInStack() {
         }
       }}>
         <Tab.Screen name="Blog" component={BlogStack} />
-        <Tab.Screen name="Settings" component={AccountScreen} />
+        <Tab.Screen name="Settings" component={AccountStack} />
       </Tab.Navigator>
   )
 }

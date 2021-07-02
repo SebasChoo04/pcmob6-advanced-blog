@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, RefreshControl} from "react-native";
+import { Text, View, TouchableOpacity, FlatList, RefreshControl} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { API, API_POSTS } from "../constants/API";
 import axios from "axios";
@@ -19,7 +19,7 @@ export default function IndexScreen({ navigation, route }) {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={addPost}>
-          <FontAwesome name="plus" size={24} color="black" style={{ color: styles.headerTint, marginRight: 15 }} />
+          <FontAwesome name="plus" size={24} style={{ color: styles.headerTint, marginRight: 15 }} />
         </TouchableOpacity>
       ),
     });

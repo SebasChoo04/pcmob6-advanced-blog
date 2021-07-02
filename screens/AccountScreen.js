@@ -1,34 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { ActivityIndicator, TouchableOpacity, StyleSheet, Text, View, Switch } from "react-native";
+import { ActivityIndicator, TouchableOpacity, Text, View, Switch } from "react-native";
 import { lightStyles, darkStyles, commonStyles } from "../styles/commonStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { API, API_WHOAMI } from "../constants/API";
 import { useSelector, useDispatch } from "react-redux";
 import { lightModeAction, darkModeAction } from "../redux/ducks/accountPref";
-import { createStackNavigator } from "@react-navigation/stack";
 
-const Stack = createStackNavigator();
+export default function AccountScreen({ navigation }) {
 
-export default function AccountStack() {
+  const [username, setUsername] = useState(null);
+  const [profilePic, setProfilePic] = useState();
 
-  const isDark = useSelector((state) => state.accountPrefs.isDark);
-  const styles = { ...isDark ? darkStyles : lightStyles }
-
-  return (
-  <Stack.Navigator>
-    <Stack.Screen component={AccountScreen} name="AccountStack" options={{
-        title: "Your Account",
-        headerStyle: styles.header,
-        headerTitleStyle: styles.headerTitle
-      }}/>
-  </Stack.Navigator>
-  )
-}
-
-function AccountScreen({ navigation }) {
-
-  const [username, setUsername] = useState("");
   const isDark = useSelector((state) => state.accountPrefs.isDark);
   const dispatch = useDispatch();
   const styles = { ...isDark ? darkStyles : lightStyles, ...commonStyles }
@@ -83,6 +66,13 @@ function AccountScreen({ navigation }) {
   return (
     <View style={[styles.container, { alignItems: "center" }]}>
       <Text style={[styles.title, styles.text, { marginTop: 30 }]}> Hello {username} !</Text>
+      <View style={{ marginTop: 20 }}>
+        { profilePic != null ?
+          <Image></Image> :
+          <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
+            <Text style={{ fontSize: 20, color: "#0000EE" }}> No profile picture. Click to take one. </Text>
+          </TouchableOpacity> }        
+      </View>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", margin: 20}}>
         <Text style={[styles.content, styles.text]}> Dark Mode? </Text>
         <Switch
