@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { darkStyles, lightStyles } from '../styles/commonStyles';
 import { FontAwesome } from '@expo/vector-icons';
+import { UPLOAD_PIC_ACTION } from '../redux/ducks/accountPref';
 
 export default function CameraScreen({ navigation }) {
 
@@ -13,6 +14,7 @@ export default function CameraScreen({ navigation }) {
   const cameraRef = useRef(null)
   const isDark = useSelector((state) => state.accountPrefs.isDark);
   const styles = isDark ? darkStyles : lightStyles;
+  const dispatch = useDispatch();
 
   async function showCamera() {
     const {status} = await Camera.requestPermissionsAsync();
@@ -44,8 +46,8 @@ export default function CameraScreen({ navigation }) {
     const photo = await cameraRef.current.takePictureAsync()
     // console.log(photo)
     console.log(photo)
-    
-    navigation.navigate("Photo", {image: photo})
+    dispatch({ type: UPLOAD_PIC_ACTION, payload: photo})
+    navigation.navigate("Account")
   }
 
   return (

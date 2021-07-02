@@ -1,22 +1,11 @@
-const DARK = "dark_mode";
-const LIGHT = "light_mode";
-const PROFILE_PICTURE = "profile_picture";
-
-export function lightModeAction(){
-  return { type: LIGHT }
-};
-
-export function darkModeAction(){
-  return { type: DARK }
-};
-
-export function updateProfilePic() {
-  return { type: PROFILE_PICTURE }
-};
+export const DARK_ACTION = "dark_mode";
+export const LIGHT_ACTION = "light_mode";
+export const UPLOAD_PIC_ACTION = "profile_picture";
+export const DELETE_PIC_ACTION = "delete_photo";
 
 const initialState = {
   isDark: false,
-  profilePicture: ""
+  profilePicture: null
 };
 
 export default function accountPrefReducer(state = initialState, action) {
@@ -27,6 +16,8 @@ export default function accountPrefReducer(state = initialState, action) {
       return { ...state, isDark: false };
     case "profile_picture":
       return { ...state, profilePicture: action.payload }
+    case "delete_photo":
+      return { ...state, profilePicture: null }
     default:
       return state;
   }

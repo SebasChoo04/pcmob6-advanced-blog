@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { ActivityIndicator, TouchableOpacity, Text, View, Switch } from "react-native";
+import { ActivityIndicator, TouchableOpacity, Text, View, Switch, Image } from "react-native";
 import { lightStyles, darkStyles, commonStyles } from "../styles/commonStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { API, API_WHOAMI } from "../constants/API";
 import { useSelector, useDispatch } from "react-redux";
-import { lightModeAction, darkModeAction } from "../redux/ducks/accountPref";
+import { LIGHT_ACTION, DARK_ACTION, DELETE_PIC_ACTION } from "../redux/ducks/accountPref";
 
 export default function AccountScreen({ navigation }) {
 
   const [username, setUsername] = useState(null);
-  const [profilePic, setProfilePic] = useState();
 
   const isDark = useSelector((state) => state.accountPrefs.isDark);
+  const profilePicture = useSelector((state) => state.accountPrefs.profilePicture);
+
   const dispatch = useDispatch();
   const styles = { ...isDark ? darkStyles : lightStyles, ...commonStyles }
 
   function switchMode() {
-    isDark ? dispatch(lightModeAction()) : dispatch(darkModeAction())
+    isDark ? dispatch({ type: LIGHT_ACTION }) : dispatch({ type: DARK_ACTION });
+  }
+
+  function deletePhoto(){
+    dispatch({ type: DELETE_PIC_ACTION });
+    navigation.navigate("Camera")
   }
 
   async function getUsername() {
@@ -54,7 +60,7 @@ export default function AccountScreen({ navigation }) {
       getUsername();
     });
     getUsername();
-
+    console.log(profilePicture)
     return removeListener;
   }, []);
 
@@ -67,11 +73,17 @@ export default function AccountScreen({ navigation }) {
     <View style={[styles.container, { alignItems: "center" }]}>
       <Text style={[styles.title, styles.text, { marginTop: 30 }]}> Hello {username} !</Text>
       <View style={{ marginTop: 20 }}>
-        { profilePic != null ?
-          <Image></Image> :
+        { profilePicture != null ?
+          <View>
+            <Image source={{ uri: profilePicture.uri }} style={{ width: 250, height: 250, borderRadius: 200 }} />
+            <TouchableOpacity onPress={deletePhoto}>
+              <Text style={{ fontSize: 20, color: "#0000EE", marginTop: 10 }}> Delete and retake photo? </Text>  
+            </TouchableOpacity>
+          </View>:
           <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
             <Text style={{ fontSize: 20, color: "#0000EE" }}> No profile picture. Click to take one. </Text>
-          </TouchableOpacity> }        
+          </TouchableOpacity>
+        }
       </View>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", margin: 20}}>
         <Text style={[styles.content, styles.text]}> Dark Mode? </Text>
