@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ActivityIndicator, TouchableOpacity, Text, View, Switch, Image } from "react-native";
+import { ActivityIndicator, TouchableOpacity, Text, View, Switch, Animated, TouchableWithoutFeedback } from "react-native";
 import { lightStyles, darkStyles, commonStyles } from "../styles/commonStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -13,7 +13,11 @@ export default function AccountScreen({ navigation }) {
 
   const isDark = useSelector((state) => state.accountPrefs.isDark);
   const profilePicture = useSelector((state) => state.accountPrefs.profilePicture);
-
+  const size = new Animated.Value(0);
+  const sizeInterpolation = {
+    inputRange: [0, 0.5, 1],
+    outputRange: [200, 300, 200]
+  }
   const dispatch = useDispatch();
   const styles = { ...isDark ? darkStyles : lightStyles, ...commonStyles }
 
@@ -51,6 +55,20 @@ export default function AccountScreen({ navigation }) {
     }
   }
 
+  function animatePicSize() {
+    Animated.loop(
+      Animated.timing(size, {
+        toValue: 1,
+        duration: 2500,
+        useNativeDriver: false
+      })).start();
+  }
+
+  function signOut() {
+    AsyncStorage.removeItem("token");
+    navigation.navigate("SignInSignUp");
+  }
+
   useEffect(() => {
     console.log("Setting up nav listener");
     // Check for when we come back to this screen
@@ -60,31 +78,28 @@ export default function AccountScreen({ navigation }) {
       getUsername();
     });
     getUsername();
-    console.log(profilePicture)
     return removeListener;
   }, []);
-
-  function signOut() {
-    AsyncStorage.removeItem("token");
-    navigation.navigate("SignInSignUp");
-  }
 
   return (
     <View style={[styles.container, { alignItems: "center" }]}>
       <Text style={[styles.title, styles.text, { marginTop: 30 }]}> Hello {username} !</Text>
-      <View style={{ marginTop: 20 }}>
-        { profilePicture != null ?
-          <View>
-            <Image source={{ uri: profilePicture.uri }} style={{ width: 250, height: 250, borderRadius: 200 }} />
-            <TouchableOpacity onPress={deletePhoto}>
-              <Text style={{ fontSize: 20, color: "#0000EE", marginTop: 10 }}> Delete and retake photo? </Text>  
-            </TouchableOpacity>
-          </View>:
-          <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
-            <Text style={{ fontSize: 20, color: "#0000EE" }}> No profile picture. Click to take one. </Text>
-          </TouchableOpacity>
+        {profilePicture != null ?
+            <View style={{ marginTop: 20, height: 325, alignItems: "center", justifyContent: "center" }}>
+              <TouchableWithoutFeedback onPress={animatePicSize}>
+                <Animated.Image
+                  source={{ uri: profilePicture.uri }}
+                  style={{
+                    width: size.interpolate(sizeInterpolation),
+                    height: size.interpolate(sizeInterpolation),
+                    borderRadius: 200,
+                  }} />
+              </TouchableWithoutFeedback>
+          </View> : <View />
         }
-      </View>
+      <TouchableOpacity onPress={() => profilePicture == null ? navigation.navigate("Camera") : deletePhoto()}>
+          <Text style={{ marginTop: 10, fontSize: 20, color: "#0000EE" }}> { profilePicture == null ? "No profile picture. Click to take one." : "Delete and retake" } </Text>
+          </TouchableOpacity>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", margin: 20}}>
         <Text style={[styles.content, styles.text]}> Dark Mode? </Text>
         <Switch
