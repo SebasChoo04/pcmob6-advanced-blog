@@ -52,6 +52,7 @@ export default function SignInSignUp({ navigation }) {
           password,
         });
         if (response.data.Error) {
+          // We have an error message for if the user already exists
           setErrorText(response.data.Error);
           setLoading(false);
         } else {

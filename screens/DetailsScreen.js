@@ -30,10 +30,8 @@ export default function ShowScreen({ navigation, route }) {
   
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, styles.text, { marginTop: 30, marginLeft: 40, marginRight: 40 }]}>{post.title}</Text>
+      <Text style={[styles.title, styles.text, { margin: 40 }]}>{post.title}</Text>
       <Text style={[styles.content, styles.text, { margin: 20 }]}>{post.text}</Text>
-      {//change text to content when making slides
-      }
     </View>
   );
 }

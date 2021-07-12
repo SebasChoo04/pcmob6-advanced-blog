@@ -34,7 +34,7 @@ export default function CreateScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={{ marginTop: 20, marginLeft: 20, marginRight: 20 }}>
+      <View style={{ margin: 20 }}>
         <Text style={[additionalStyles.label, styles.text]}>Enter Title:</Text>
         <TextInput
           style={additionalStyles.input}
